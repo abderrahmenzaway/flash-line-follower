@@ -43,17 +43,17 @@ The platform is generic. The core (line control, speed presets, encoder moves, t
 
 ## Electrical and mechanical design
 
-<!-- TODO: add the 4 images exported from the presentation -->
+**PCB layout (Fritzing)**: the two 8-sensor bars feed a 16-channel multiplexer, so all 16 line sensors are read through a single analog pin. The board also carries the two TB6612FNG drivers, the DC-DC converter, the OLED, the IMU and the start button.
 
-**Wiring diagram (Fritzing)**
-<!-- ![Wiring](docs/design/wiring.png) -->
+![PCB layout](docs/design/pcb.png)
 
-**PCB layout (Fritzing)**
-<!-- ![PCB](docs/design/pcb.png) -->
+**3D mechanical design (SketchUp)**: two-level chassis, with the battery, power and motors on the lower deck and the controller, drivers and display on the upper deck.
 
-**3D mechanical design (SketchUp)**: two-level chassis, top / isometric / side / rear views
-<!-- ![3D design](docs/design/3d-views-1.png) -->
-<!-- ![3D design](docs/design/3d-views-2.png) -->
+![3D design: top, isometric and left views](docs/design/3d-views-1.png)
+![3D design: rear and right views](docs/design/3d-views-2.png)
+
+<!-- TODO: add the Fritzing wiring diagram (slide 5) -->
+<!-- ![Wiring diagram](docs/design/wiring.png) -->
 
 ## Architecture
 
