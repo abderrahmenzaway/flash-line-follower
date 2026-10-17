@@ -22,7 +22,7 @@ The platform is generic. The core (line control, speed presets, encoder moves, t
 - **Speed presets** tuned on the track and switched between sections (straights, curves, slow zones)
 - **Encoder-based moves and turns**: wheel encoders on interrupts, with a PID correction that keeps both wheels in sync
 - **Mission programs**: each track section is a short sequence of line following and sensor-triggered manoeuvres, so a new competition only needs a new mission file
-- **Voice control** from an Android app (MIT App Inventor) over Bluetooth (HC-05)
+- **Voice control** from an Android app (Kodular) over Bluetooth (HC-05)
 - **On-robot feedback**: OLED screen (live sensor bars, messages), RGB LED and buzzer to validate each step of the logic on the track
 - **Hand-soldered control board** on perfboard: motor drivers, voltage regulator, gyroscope and screen
 
@@ -38,7 +38,7 @@ push button     ──┘   │ speed presets, encoder turns     │──► OL
                       │ voice / Bluetooth commands       │
                       └────────────────▲─────────────────┘
                                        │ HC-05 Bluetooth
-                    Android app (App Inventor): speech → one-letter command
+                    Android app (Kodular): speech → one-letter command
 ```
 
 ## Run modes
@@ -91,12 +91,12 @@ The ENSTAB track had six themed sections, run in this order:
 
 ## Voice control app
 
-An Android app made with **MIT App Inventor**: it listens to a spoken command, turns it into a one-letter command and sends it to the robot over Bluetooth.
+An Android app made with **Kodular**: it listens to a spoken command, turns it into a one-letter command and sends it to the robot over Bluetooth.
 
 <!-- TODO: add a screenshot of the app -->
 <!-- ![App](docs/images/app.png) -->
 
-- Install: download the `.apk` from the [`app/`](app/) folder on an Android phone and allow installs from unknown sources.
+- Install: download [`Flash-Voice-Control.apk`](app/Flash-Voice-Control.apk) on an Android phone and allow installs from unknown sources.
 - Pair the phone with the HC-05 (default PIN 1234 or 0000), open the app and connect.
 
 | Command | Action |
@@ -137,7 +137,7 @@ Drawn with Fritzing.
 
 ```
 firmware/main_code/   Teensy 4.1 firmware (open main_code.ino in the Arduino IDE)
-app/                  Android voice control app (.apk) built with MIT App Inventor
+app/                  Android voice control app (.apk) built with Kodular
 docs/schematic/       Fritzing schematic (image + .fzz source)
 docs/images/          photos and screenshots
 ```
@@ -160,4 +160,4 @@ docs/images/          photos and screenshots
 
 ## Tech
 
-C++, Teensy 4.1 (ARM Cortex-M7), Arduino IDE + Teensyduino, PD control, QTR line sensors, wheel encoders and interrupts, I2C (OLED, MPU6050), HC-05 Bluetooth, MIT App Inventor, Fritzing, soldering
+C++, Teensy 4.1 (ARM Cortex-M7), Arduino IDE + Teensyduino, PD control, QTR line sensors, wheel encoders and interrupts, I2C (OLED, MPU6050), HC-05 Bluetooth, Kodular, Fritzing, soldering
