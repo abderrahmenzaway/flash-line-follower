@@ -16,11 +16,6 @@ The platform is generic. The core (line control, speed presets, encoder moves, t
 | [![Competition run](https://img.youtube.com/vi/gT6SelVV1c0/hqdefault.jpg)](https://youtu.be/gT6SelVV1c0) | [![Voice control](https://img.youtube.com/vi/3Rvkx6H0xsE/hqdefault.jpg)](https://youtube.com/shorts/3Rvkx6H0xsE) |
 | [▶️ Watch on YouTube](https://youtu.be/gT6SelVV1c0) | [▶️ Watch on YouTube](https://youtube.com/shorts/3Rvkx6H0xsE) |
 
-| Cube counting (Raspberry Pi camera) |
-|---|
-| [![Cube counting](https://img.youtube.com/vi/V6KUgvmmu3I/hqdefault.jpg)](https://youtu.be/V6KUgvmmu3I) |
-| [▶️ Watch on YouTube](https://youtu.be/V6KUgvmmu3I) |
-
 ## Features
 
 - **PD line following** on a 16-sensor XLINE board, with black-line and white-line modes
