@@ -118,7 +118,7 @@ The ENSTAB track had six themed sections, run in this order:
 
 The ENSTAB program reads 14 of the 16 sensors (`SENSORCOUNT` in `main_code.ino`).
 
-**Adapting to another competition:** replace the `Mission_*.ino` files with the new track's sections and update the mission sequence in `loop()`. The rest of the firmware stays the same.
+**Adapting to another competition:** start from [`firmware/template/`](firmware/template/), the generic firmware with no competition-specific code. It keeps the shared core (line control, speed presets, gyro PID moves and turns with the MPU6050, OLED, Bluetooth) and starts in voice control mode. Add one `Mission_*.ino` file per track section and call them in `loop()`.
 
 ## Voice control app
 
@@ -162,7 +162,8 @@ An Android app made with **Kodular**: it listens to a spoken command, turns it i
 ## Repository layout
 
 ```
-firmware/main_code/   Arduino firmware (open main_code.ino in the Arduino IDE)
+firmware/main_code/   firmware used at ENSTAB (core + 6 missions)
+firmware/template/    generic firmware to start a new competition (core + gyro moves, no missions)
 app/                  Android voice control app (.apk) built with Kodular
 docs/design/          wiring diagram, PCB layout, 3D design
 docs/images/          photos and screenshots
