@@ -4,7 +4,7 @@
  *
  * Sketch files (the Arduino IDE merges them in this order):
  *   template.ino      -> includes, pin config, global objects, setup() and loop()
- *   Bluetooth.ino     -> Bluetooth remote control (voiceCommande)
+ *   Bluetooth.ino     -> Bluetooth remote control (handleVoiceCommand)
  *   Gyro.ino          -> MPU6050 init, angle reading, gyro-based moves
  *   Line_Follower.ino -> QTR calibration, speed presets, PID line following
  *   Utils.ino         -> motors, LED, buzzer, sensors, OLED display
@@ -100,7 +100,7 @@ void setup(void)
 {
   Serial.begin(9600);
   Wire.begin();
-  InitBluetooth();
+  initBluetooth();
 
   pinMode(BUZZER, OUTPUT);
   pinMode(TRIG, OUTPUT);
@@ -129,39 +129,39 @@ void setup(void)
     }
   }
 
-  start();
+  startupSequence();
 }
 
 // ================================ LOOP ================================
 void loop(void)
 {
-  voiceCommande();
+  handleVoiceCommand();
 }
 
 // ========================== STARTUP SEQUENCE ==========================
-static void start(void)
+static void startupSequence(void)
 {
   // Step 1: gyro calibration
-  Affichage_Text("Calib Gyro?");
+  showText("Calibrate gyro?");
   while (digitalRead(BTN) == 0);  // Wait for button press
-  Alerte(2, 100);
-  RGB(0, 1, 0);                   // Green LED: gyro calibration running
-  InitGyro();
-  RGB(0, 0, 0);
-  Affichage_Text("Calibration Gyro Terminee");
-  Alerte(2, 100);
+  blinkAlert(2, 100);
+  setLed(0, 1, 0);                   // Green LED: gyro calibration running
+  initGyro();
+  setLed(0, 0, 0);
+  showText("Gyro calibrated");
+  blinkAlert(2, 100);
 
   // Step 2: QTR sensor calibration
-  Affichage_Text("Calib QTR?");
+  showText("Calibrate QTR?");
   while (digitalRead(BTN) == 0);  // Wait for button press
-  Calibration();
-  RGB(0, 0, 0);
-  Alerte(2, 100);
-  Affichage_Text("Calib QTR Terminee");
+  calibrateSensors();
+  setLed(0, 0, 0);
+  blinkAlert(2, 100);
+  showText("QTR calibrated");
   delay(500);
 
   // Show gyro angle and sensor bars until the button is pressed
   while (digitalRead(BTN) == 0) {
-    Afficher_Tout();
+    showSensorScreen();
   }
 }

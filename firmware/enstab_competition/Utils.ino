@@ -5,7 +5,7 @@
 
 // ============================= MOTORS ==============================
 // Speeds from -255 to 255. 0 = brake.
-void Drive(int16_t left, int16_t right)
+void setMotorSpeeds(int16_t left, int16_t right)
 {
   if (left == 0) MotorL.brake();
   else           MotorL.drive(left);
@@ -15,7 +15,7 @@ void Drive(int16_t left, int16_t right)
 }
 
 // Brake both motors, then wait "time" ms
-void Stop(int time)
+void stopMotors(int time)
 {
   MotorR.brake();
   MotorL.brake();
@@ -25,34 +25,34 @@ void Stop(int time)
 // Turn using the encoders.
 // rot:  'r' = right, 'l' = left
 // meth: "adi" = spin in place, anything else = pivot on one wheel
-void turn(char rot, String meth)
+void turnWithEncoders(char rot, String meth)
 {
   if (meth == "adi") {
-    if (rot == 'r')      moveForward('l', 0.8, 180);
-    else if (rot == 'l') moveForward('r', 0.8, 180);
+    if (rot == 'r')      rotateWheels('l', 0.8, 180);
+    else if (rot == 'l') rotateWheels('r', 0.8, 180);
   } else {
-    if (rot == 'r')      moveForward('g', 1.1, 180);
-    else if (rot == 'l') moveForward('d', 1.1, 180);
+    if (rot == 'r')      rotateWheels('g', 1.1, 180);
+    else if (rot == 'l') rotateWheels('d', 1.1, 180);
   }
 }
 
 // Drive forward until both outer sensors see white
-void first_step()
+void exitStartArea()
 {
   while (1) {
-    Drive(100, 100);
+    setMotorSpeeds(100, 100);
     qtr.readLineBlack(SensorValues);
-    if (sens(0, 'W') && sens(SENSORCOUNT - 1, 'W')) {
+    if (sensorIs(0, 'W') && sensorIs(SENSORCOUNT - 1, 'W')) {
       break;
     }
   }
-  Stop();
+  stopMotors();
 }
 
 // ============================ RGB LED ==============================
-// RGB(1,0,0) red   | RGB(0,1,0) green   | RGB(0,0,1) blue
-// RGB(0,1,1) cyan  | RGB(1,0,1) magenta | RGB(1,1,0) yellow | RGB(1,1,1) white
-void RGB(uint8_t red_value, uint8_t green_value, uint8_t blue_value)
+// setLed(1,0,0) red   | setLed(0,1,0) green   | setLed(0,0,1) blue
+// setLed(0,1,1) cyan  | setLed(1,0,1) magenta | setLed(1,1,0) yellow | setLed(1,1,1) white
+void setLed(uint8_t red_value, uint8_t green_value, uint8_t blue_value)
 {
   digitalWrite(RED, red_value);
   digitalWrite(GREEN, green_value);
@@ -61,21 +61,21 @@ void RGB(uint8_t red_value, uint8_t green_value, uint8_t blue_value)
 
 // ============================= BUZZER ==============================
 // Blink red LED + buzzer "nb" times, "timing" ms on / off
-void Alerte(uint8_t nb, uint16_t timing)
+void blinkAlert(uint8_t nb, uint16_t timing)
 {
   for (uint8_t i = 0; i < nb; i++) {
-    RGB(1, 0, 0);
+    setLed(1, 0, 0);
     digitalWrite(BUZZER, HIGH);
     delay(timing);
 
-    RGB(0, 0, 0);
+    setLed(0, 0, 0);
     digitalWrite(BUZZER, LOW);
     delay(timing);
   }
 }
 
 // Short buzzer beeps: "n" beeps of "t" ms
-void Beep(int n, float t)
+void beep(int n, float t)
 {
   for (int i = 0; i < n; i++) {
     digitalWrite(BUZZER, HIGH);
@@ -86,18 +86,18 @@ void Beep(int n, float t)
 }
 
 // ============================ SENSORS ==============================
-uint8_t Valeur_PROXL(void)
+uint8_t readProximityLeft(void)
 {
   return digitalRead(PROX_L);
 }
 
-uint8_t Valeur_PROXR(void)
+uint8_t readProximityRight(void)
 {
   return digitalRead(PROX_R);
 }
 
 // Ultrasonic distance in cm
-float Distance(void)
+float readDistanceCm(void)
 {
   digitalWrite(TRIG, LOW);
   delayMicroseconds(2);
@@ -113,7 +113,7 @@ float Distance(void)
 // Uses the last values read into SensorValues.
 
 // True if every sensor sees black ('B') or every sensor sees white ('W')
-bool All(char m)
+bool allSensors(char m)
 {
   for (uint8_t i = 0; i < SENSORCOUNT; i++) {
     if (m == 'B' && SensorValues[i] <= 500) return false;
@@ -123,7 +123,7 @@ bool All(char m)
 }
 
 // True if sensor "index" sees black ('B') or white ('W')
-bool sens(int index, char color)
+bool sensorIs(int index, char color)
 {
   if (color == 'B') return SensorValues[index] >= 500;
   if (color == 'W') return SensorValues[index] <= 400;
@@ -132,7 +132,7 @@ bool sens(int index, char color)
 
 // Reads the sensors, then checks that all listed sensors are
 // above ('>') or below ('<') the threshold
-bool myfunc(int indexes[], int size, char s, int threshold)
+bool sensorsMatch(int indexes[], int size, char s, int threshold)
 {
   qtr.readLineBlack(SensorValues);
   for (int i = 0; i < size; i++) {
@@ -156,7 +156,7 @@ static void drawSensorBars(void)
 }
 
 // Shows a message + sensor bars
-void Afficher_Tout(void)
+void showSensorScreen(void)
 {
   display.setTextSize(1);
   display.setCursor(10, 5);
@@ -167,14 +167,14 @@ void Afficher_Tout(void)
 }
 
 // Shows sensor bars only
-void Afficher_Calibrage(void)
+void showSensorBars(void)
 {
   drawSensorBars();
   display.display();
   display.clearDisplay();
 }
 
-void Affichage_Text(String m)
+void showText(String m)
 {
   display.clearDisplay();
   display.setCursor(10, 30);
@@ -184,28 +184,28 @@ void Affichage_Text(String m)
 }
 
 // Stop and show sensor bars until the button is pressed, then released
-void click()
+void pauseUntilButton()
 {
-  Stop();
+  stopMotors();
   while (digitalRead(BTN) == 0) {
-    Afficher_Calibrage();
+    showSensorBars();
   }
-  Affichage_Text("wanna release ?");
+  showText("wanna release ?");
   while (digitalRead(BTN));
-  Affichage_Text("");
+  showText("");
 }
 
 // Shows the arrow type from the two Raspberry Pi inputs
-void arr(bool a, bool b)
+void showArrowType(bool a, bool b)
 {
   if (a && !b) {
-    Affichage_Text("Hunting Arrow");
-    RGB(0, 0, 1);
+    showText("Hunting Arrow");
+    setLed(0, 0, 1);
   } else if (a && b) {
-    Affichage_Text("Incendiary Arrow");
-    RGB(1, 1, 0);
+    showText("Incendiary Arrow");
+    setLed(1, 1, 0);
   } else if (!a && b) {
-    Affichage_Text("Explosive Arrow");
-    RGB(1, 0, 0);
+    showText("Explosive Arrow");
+    setLed(1, 0, 0);
   }
 }

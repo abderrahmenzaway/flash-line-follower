@@ -3,79 +3,79 @@
 // ============================================================
 
 // One Australia lap section (repeated twice in the mission)
-static void australiaLoop()
+static void australiaLap()
 {
   while (SensorValues[6] < 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(100, 110);
+    setMotorSpeeds(100, 110);
   }
   while (SensorValues[6] > 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(100, 110);
+    setMotorSpeeds(100, 110);
   }
   while (SensorValues[6] < 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(-100, 80);
+    setMotorSpeeds(-100, 80);
   }
-  while (SensorValues[13] < 500) PidLine();
+  while (SensorValues[13] < 500) followLine();
   while (SensorValues[8] > 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(110, 80);
+    setMotorSpeeds(110, 80);
   }
   while (SensorValues[8] < 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(100, -100);
+    setMotorSpeeds(100, -100);
   }
-  while (SensorValues[0] < 500) PidLine();
+  while (SensorValues[0] < 500) followLine();
 }
 
-void australia()
+void missionAustralia()
 {
   // Towards Australia
   while (SensorValues[12] > 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(-90, 130);
+    setMotorSpeeds(-90, 130);
   }
   while (SensorValues[3] < 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(-120, 70);
+    setMotorSpeeds(-120, 70);
   }
   while (SensorValues[13] > 500) {
     qtr.readLineBlack(SensorValues);
-    PidLine();
+    followLine();
   }
-  minspeed_config();
-  while (SensorValues[13] < 500) PidLine();
+  minSpeedConfig();
+  while (SensorValues[13] < 500) followLine();
 
   // Australia 1
   while (SensorValues[13] > 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(-60, 110);
+    setMotorSpeeds(-60, 110);
   }
   while (SensorValues[6] < 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(-100, 100);
+    setMotorSpeeds(-100, 100);
   }
   while (SensorValues[3] > 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(-100, 100);
+    setMotorSpeeds(-100, 100);
   }
-  while (SensorValues[13] < 500) PidLine();
+  while (SensorValues[13] < 500) followLine();
   while (SensorValues[8] > 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(110, 80);
+    setMotorSpeeds(110, 80);
   }
   while (SensorValues[8] < 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(100, -100);
+    setMotorSpeeds(100, -100);
   }
-  while (SensorValues[0] < 500) PidLine();
+  while (SensorValues[0] < 500) followLine();
 
   // Australia 2
-  australiaLoop();
+  australiaLap();
 
   // Australia 3
-  RGB(0, 1, 0);
-  australiaLoop();
-  RGB(0, 0, 0);
+  setLed(0, 1, 0);
+  australiaLap();
+  setLed(0, 0, 0);
 }

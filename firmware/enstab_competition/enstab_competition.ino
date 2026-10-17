@@ -1,9 +1,9 @@
 /*
- * main_code - Fast line follower robot (Arduino Mega 2560 Pro)
+ * enstab_competition - Fast line follower robot (Arduino Mega 2560 Pro)
  *
  * Sketch files (the Arduino IDE merges them in this order):
- *   main_code.ino           -> includes, pin config, globals, setup() and loop()
- *   Bluetooth.ino           -> Bluetooth remote control (voiceCommande)
+ *   enstab_competition.ino  -> includes, pin config, globals, setup() and loop()
+ *   Bluetooth.ino           -> Bluetooth remote control (handleVoiceCommand)
  *   Encoder.ino             -> wheel encoders, encoder-based moves
  *   Gyro.ino                -> MPU6050 init, angle reading, gyro-based moves
  *   Line_Follower.ino       -> QTR calibration, speed presets, PID line following
@@ -97,7 +97,7 @@ const uint8_t Analog_Pins[] = {
 
 QTRSensors qtr;
 
-// Manual calibration values (see ManualCalibration() in Line_Follower.ino)
+// Manual calibration values (see loadManualCalibration() in Line_Follower.ino)
 uint16_t manualMin[SENSORCOUNT] = { 946, 932, 929, 927, 927, 926, 934, 938, 934, 927, 931, 931, 933, 940 };  // Black
 uint16_t manualMax[SENSORCOUNT] = { 990, 987, 986, 977, 985, 982, 976, 985, 985, 977, 984, 986, 980, 980 };  // White
 
@@ -120,14 +120,14 @@ float Ki = 0.0;
 float Kd = 0.0;
 
 // ===================== PROTOTYPES (default arguments) =================
-void Stop(int time = 0);
-bool All(char m = 'B');
-bool sens(int index, char color = 'B');
-bool myfunc(int indexes[], int size, char s = '>', int threshold = 500);
-void turn(char rot, String meth = "adi");
-void PidLine(bool ret = true, char mode = 'B');
-void PidLineWhite(bool ret = true, char mode = 'B');
-void PidLine_LastError(char mode = 'B');
+void stopMotors(int time = 0);
+bool allSensors(char m = 'B');
+bool sensorIs(int index, char color = 'B');
+bool sensorsMatch(int indexes[], int size, char s = '>', int threshold = 500);
+void turnWithEncoders(char rot, String meth = "adi");
+void followLine(bool ret = true, char mode = 'B');
+void followLineThroughGaps(bool ret = true, char mode = 'B');
+void followLineRecover(char mode = 'B');
 
 // =============================== SETUP ================================
 void setup(void)
@@ -164,8 +164,8 @@ void setup(void)
   attachInterrupt(digitalPinToInterrupt(ENCODER_A1), readEncoder1, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCODER_A2), readEncoder2, RISING);
 
-  Beep(1, 40);
-  RGB(0, 0, 0);
+  beep(1, 40);
+  setLed(0, 0, 0);
 
   qtr.setTypeAnalog();
   qtr.setSensorPins(Analog_Pins, SENSORCOUNT);
@@ -179,57 +179,57 @@ void setup(void)
   display.clearDisplay();
 
   Serial.println(F("restart"));
-  start();
-  mediumspeed_config();
+  startupSequence();
+  mediumSpeedConfig();
 }
 
 // ================================ LOOP ================================
 void loop(void)
 {
 #if USE_BLUETOOTH
-  voiceCommande();
+  handleVoiceCommand();
 #else
-  mexic();
-  penaltie();
-  australia();
-  haland();
-  modric();
-  france();
-  Stop();
+  missionMexico();
+  missionPenalty();
+  missionAustralia();
+  missionHolland();
+  missionModric();
+  missionFrance();
+  stopMotors();
   while (digitalRead(BTN) == 0);  // Wait for button to run again
   qtr.readLineBlack(SensorValues);
 #endif
 }
 
 // ========================== STARTUP SEQUENCE ==========================
-static void start(void)
+static void startupSequence(void)
 {
   // QTR sensor calibration
-  Affichage_Text("Calib QTR");
+  showText("Calibrate QTR");
   while (digitalRead(BTN) == 0);  // Wait for press
-  Affichage_Text("wait");
-  RGB(0, 0, 0);
+  showText("wait");
+  setLed(0, 0, 0);
   while (digitalRead(BTN));       // Wait for release
-  Affichage_Text("Calibrating QTR ...");
-  Calibration();                  // or ManualCalibration();
-  Affichage_Text("Calib QTR Terminee");
+  showText("Calibrating QTR ...");
+  calibrateSensors();                  // or loadManualCalibration();
+  showText("QTR calibrated");
 
   // Gyro calibration (disabled)
-  // Affichage_Text("Calib Gyro");
+  // showText("Calibrate gyro");
   // while (digitalRead(BTN) == 0);
-  // Affichage_Text("wait");
+  // showText("wait");
   // while (digitalRead(BTN));
-  // RGB(0, 1, 0);
-  // InitGyro();
-  // RGB(0, 0, 0);
-  // Beep(2, 30);
-  // Affichage_Text("Calibration Gyro Terminee");
+  // setLed(0, 1, 0);
+  // initGyro();
+  // setLed(0, 0, 0);
+  // beep(2, 30);
+  // showText("Gyro calibrated");
 
   delay(1000);
 
   // Show sensor bars until the button is pressed
   while (digitalRead(BTN) == 0) {
-    Afficher_Tout();
+    showSensorScreen();
   }
-  Affichage_Text("let's go ?");
+  showText("let's go ?");
 }

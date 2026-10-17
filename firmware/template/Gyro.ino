@@ -46,7 +46,7 @@ void dmpDataReady(void)
 }
 
 // ========================= INITIALISATION ========================
-void InitGyro(void)
+void initGyro(void)
 {
   Serial.println(F("Initializing I2C devices..."));
   mpu.initialize();
@@ -134,7 +134,7 @@ uint8_t GetCurrentFIFOPacket(uint8_t *data, uint8_t length)
   return Flag;
 }
 
-float getYawVal(uint8_t *data)
+float getYaw(uint8_t *data)
 {
   mpu.dmpGetQuaternion(&q, data);
   mpu.dmpGetGravity(&gravity, &q);
@@ -146,51 +146,51 @@ float getYawVal(uint8_t *data)
 float getAngle(void)
 {
   GetCurrentFIFOPacket(fifoBuffer, packetSize);
-  return getYawVal(fifoBuffer);
+  return getYaw(fifoBuffer);
 }
 
 // ========================= GYRO MOVES ============================
 
 // Simple bang-bang heading hold around "zero" (handles the +/-180 wrap)
-void Avance_Gyro(float angle, float zero, int precision, int vav, int vitess)
+void gyroDriveStraight(float angle, float zero, int precision, int vav, int vitess)
 {
   if (zero >= 0) {  // Positive target
     if (zero + precision < 180) {
       if (angle < zero - precision)
-        Drive(vitess, 0);
+        setMotorSpeeds(vitess, 0);
       else if (angle > zero + precision)
-        Drive(0, vitess);
+        setMotorSpeeds(0, vitess);
       else
-        Drive(vav, vav);
+        setMotorSpeeds(vav, vav);
     } else {  // zero + precision >= 180
       if (((angle >= 0) && (angle > zero - precision)) || ((angle < 0) && (angle < -360 + precision + zero)))
-        Drive(vav, vav);
+        setMotorSpeeds(vav, vav);
       else if ((angle >= 0) && (angle <= zero + precision))
-        Drive(vitess, 0);
+        setMotorSpeeds(vitess, 0);
       else if ((angle < 0) && (angle > -360 + zero + precision))
-        Drive(0, vitess);
+        setMotorSpeeds(0, vitess);
     }
   } else {  // Negative target
     if (zero - precision > -180) {
       if (angle < zero - precision)
-        Drive(vitess, 0);
+        setMotorSpeeds(vitess, 0);
       else if (angle > zero + precision)
-        Drive(0, vitess);
+        setMotorSpeeds(0, vitess);
       else
-        Drive(vav, vav);
+        setMotorSpeeds(vav, vav);
     } else {
       if (((angle <= 0) && (angle < zero + precision)) || ((angle > 0) && (angle >= (360 - precision + zero))))
-        Drive(vav, vav);
+        setMotorSpeeds(vav, vav);
       else if ((angle > zero + precision) && (angle <= 0))
-        Drive(0, vitess);
+        setMotorSpeeds(0, vitess);
       else if ((angle < 360 + zero - precision) && (angle > 0))
-        Drive(vitess, 0);
+        setMotorSpeeds(vitess, 0);
     }
   }
 }
 
 // Drive straight holding the heading "Setpoint" (PID, no angle wrap)
-void Avance_Gyro_PID(float Setpoint, int16_t vitesse)
+void gyroDriveStraightPID(float Setpoint, int16_t vitesse)
 {
   maxspeedag  = 255;
   maxspeedbg  = 255;
@@ -213,12 +213,12 @@ void Avance_Gyro_PID(float Setpoint, int16_t vitesse)
   if (motorspeedag > maxspeedag) motorspeedag = maxspeedag;
   if (motorspeedbg > maxspeedbg) motorspeedbg = maxspeedbg;
 
-  Drive(motorspeedag, motorspeedbg);
+  setMotorSpeeds(motorspeedag, motorspeedbg);
   lastErrorg = errorg;
 }
 
 // Drive straight holding the heading "Setpoint" (PID, shortest-path angle wrap)
-void Avance_Gyro_PID_New(float Setpoint, int16_t vitesse)
+void gyroDriveStraightPID_v2(float Setpoint, int16_t vitesse)
 {
   maxspeedag  = 255;
   maxspeedbg  = 255;
@@ -246,12 +246,12 @@ void Avance_Gyro_PID_New(float Setpoint, int16_t vitesse)
   if (motorspeedag > maxspeedag) motorspeedag = maxspeedag;
   if (motorspeedbg > maxspeedbg) motorspeedbg = maxspeedbg;
 
-  Drive(motorspeedag, motorspeedbg);
+  setMotorSpeeds(motorspeedag, motorspeedbg);
   lastErrorg = errorg;
 }
 
 // Turn in place until the heading reaches "Setpoint" (blocking, no angle wrap)
-void Turn_Gyro_PID(float Setpoint)
+void gyroTurnPID(float Setpoint)
 {
   maxspeedag  = 100;
   maxspeedbg  = 100;
@@ -285,17 +285,17 @@ void Turn_Gyro_PID(float Setpoint)
     } else {
       ma = 0;
       mb = 0;
-      Stop();
+      stopMotors();
       stp = true;
     }
 
-    Drive(ma, mb);
+    setMotorSpeeds(ma, mb);
     lastErrorg = errorg;
   }
 }
 
 // Turn in place until the heading reaches "Setpoint" (blocking, shortest-path wrap)
-void Turn_Gyro_PID_New(float Setpoint)
+void gyroTurnPID_v2(float Setpoint)
 {
   maxspeedag  = 70;
   maxspeedbg  = 70;
@@ -334,31 +334,31 @@ void Turn_Gyro_PID_New(float Setpoint)
     } else {
       ma = 0;
       mb = 0;
-      Stop();      // Balanced: target reached
+      stopMotors();      // Balanced: target reached
       stp = true;
     }
 
-    Drive(ma, mb);
+    setMotorSpeeds(ma, mb);
     lastErrorg = errorg;
   }
 }
 
 // Drive forward, correcting slightly toward heading x
-void Avance_Gyro_Simple(int16_t x, int16_t vitesse)
+void gyroForward(int16_t x, int16_t vitesse)
 {
   if (getAngle() > x) {
-    Drive(vitesse, vitesse + 5);
+    setMotorSpeeds(vitesse, vitesse + 5);
   } else {
-    Drive(vitesse + 5, vitesse);
+    setMotorSpeeds(vitesse + 5, vitesse);
   }
 }
 
 // Drive backward, correcting slightly toward heading x
-void Arriere_Gyro_Simple(int16_t x, int16_t vitesse)
+void gyroBackward(int16_t x, int16_t vitesse)
 {
   if (getAngle() > x) {
-    Drive(-vitesse - 10, -vitesse);
+    setMotorSpeeds(-vitesse - 10, -vitesse);
   } else {
-    Drive(-vitesse, -vitesse - 10);
+    setMotorSpeeds(-vitesse, -vitesse - 10);
   }
 }

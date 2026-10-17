@@ -16,6 +16,11 @@ The platform is generic. The core (line control, speed presets, encoder moves, t
 | [![Competition run](https://img.youtube.com/vi/gT6SelVV1c0/hqdefault.jpg)](https://youtu.be/gT6SelVV1c0) | [![Voice control](https://img.youtube.com/vi/3Rvkx6H0xsE/hqdefault.jpg)](https://youtube.com/shorts/3Rvkx6H0xsE) |
 | [▶️ Watch on YouTube](https://youtu.be/gT6SelVV1c0) | [▶️ Watch on YouTube](https://youtube.com/shorts/3Rvkx6H0xsE) |
 
+| Cube counting (Raspberry Pi camera) |
+|---|
+| [![Cube counting](https://img.youtube.com/vi/V6KUgvmmu3I/hqdefault.jpg)](https://youtu.be/V6KUgvmmu3I) |
+| [▶️ Watch on YouTube](https://youtu.be/V6KUgvmmu3I) |
+
 ## Features
 
 - **PD line following** on a 16-sensor XLINE board, with black-line and white-line modes
@@ -72,7 +77,7 @@ push button     ──┘   │ speed presets, encoder turns     │──► OL
 
 ## Run modes
 
-Set `USE_BLUETOOTH` at the top of [`main_code.ino`](firmware/main_code/main_code.ino):
+Set `USE_BLUETOOTH` at the top of [`enstab_competition.ino`](firmware/enstab_competition/enstab_competition.ino):
 
 | Value | Mode |
 |---|---|
@@ -93,15 +98,15 @@ line sensors ──► line position ──► error = centre − position
                               TB6612FNG ──► 2 DC motors
 ```
 
-Gains and speeds change along the track (from [`Line_Follower.ino`](firmware/main_code/Line_Follower.ino)):
+Gains and speeds change along the track (from [`Line_Follower.ino`](firmware/enstab_competition/Line_Follower.ino)):
 
 | Preset | Kp | Kd | Max speed (0-255) | Used for |
 |---|---|---|---|---|
-| `strate_config` | 0.023 | 0.15 | 240 | fast straights |
-| `maxspeed_config` | 0.04 | 0.25 | 230 | fast sections |
-| `mediumspeed_config` | 0.038 | 0.2 | 140 | default |
-| `mediumspeed_config_pro` | 0.038 | 0.2 | 120 | tight turn sequences |
-| `minspeed_config` / `strate_configmin` | 0.027 / 0.015 | 0.15 / 0.12 | 130 | slow, precise zones |
+| `straightFastConfig` | 0.023 | 0.15 | 240 | fast straights |
+| `maxSpeedConfig` | 0.04 | 0.25 | 230 | fast sections |
+| `mediumSpeedConfig` | 0.038 | 0.2 | 140 | default |
+| `mediumSpeedTightConfig` | 0.038 | 0.2 | 120 | tight turn sequences |
+| `minSpeedConfig` / `straightSlowConfig` | 0.027 / 0.015 | 0.15 / 0.12 | 130 | slow, precise zones |
 
 ## Example: the ENSTAB mission program
 
@@ -116,7 +121,7 @@ The ENSTAB track had six themed sections, run in this order:
 | 5 | Modric: speed changes, crossing a gap, then a turn | `Mission_5_Modric.ino` |
 | 6 | France: white line on a black background, then back to black | `Mission_6_France.ino` |
 
-The ENSTAB program reads 14 of the 16 sensors (`SENSORCOUNT` in `main_code.ino`).
+The ENSTAB program reads 14 of the 16 sensors (`SENSORCOUNT` in `enstab_competition.ino`).
 
 **Adapting to another competition:** start from [`firmware/template/`](firmware/template/), the generic firmware with no competition-specific code. It keeps the shared core (line control, speed presets, gyro PID moves and turns with the MPU6050, OLED, Bluetooth) and starts in voice control mode. Add one `Mission_*.ino` file per track section and call them in `loop()`.
 
@@ -162,7 +167,7 @@ An Android app made with **Kodular**: it listens to a spoken command, turns it i
 ## Repository layout
 
 ```
-firmware/main_code/   firmware used at ENSTAB (core + 6 missions)
+firmware/enstab_competition/   firmware used at ENSTAB (core + 6 missions)
 firmware/template/    generic firmware to start a new competition (core + gyro moves, no missions)
 app/                  Android voice control app (.apk) built with Kodular
 docs/design/          wiring diagram, PCB layout, 3D design
@@ -171,8 +176,8 @@ docs/images/          photos and screenshots
 
 | Firmware file | Contents |
 |---|---|
-| `main_code.ino` | Pins, globals, `setup()`, `loop()` with the run modes, startup sequence |
-| `Line_Follower.ino` | Speed presets, `PidLine()` variants, calibration |
+| `enstab_competition.ino` | Pins, globals, `setup()`, `loop()` with the run modes, startup sequence |
+| `Line_Follower.ino` | Speed presets, `followLine()` variants, calibration |
 | `Encoder.ino` | Encoder interrupts, synchronised straight moves |
 | `Utils.ino` | Motors, turns, LED, buzzer, OLED, sensor helpers |
 | `Bluetooth.ino` | Voice / Bluetooth commands |
@@ -183,7 +188,7 @@ docs/images/          photos and screenshots
 
 1. Install the [Arduino IDE](https://www.arduino.cc/en/software).
 2. Install these libraries from the Library Manager: Adafruit SSD1306, Adafruit GFX, SparkFun TB6612FNG, QTRSensors (Pololu), I2Cdevlib MPU6050.
-3. Open `firmware/main_code/main_code.ino`, select **Tools → Board → Arduino Mega or Mega 2560** (processor ATmega2560), and upload.
+3. Open `firmware/enstab_competition/enstab_competition.ino`, select **Tools → Board → Arduino Mega or Mega 2560** (processor ATmega2560), and upload.
 
 ## Tech
 

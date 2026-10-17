@@ -3,7 +3,7 @@
 // ============================================================
 
 // ========================== SPEED PRESETS ==========================
-void maxspeed_config(void)
+void maxSpeedConfig(void)
 {
   Kp = 0.07;
   Kd = 0.2;
@@ -13,7 +13,7 @@ void maxspeed_config(void)
   BASESPEEDL = MAXSPEEDL - 20;
 }
 
-void mediumspeed_config(void)
+void mediumSpeedConfig(void)
 {
   Kp = 0.06;
   Kd = 0.25;
@@ -23,7 +23,7 @@ void mediumspeed_config(void)
   BASESPEEDL = MAXSPEEDL - 20;
 }
 
-void minspeed_config(void)
+void minSpeedConfig(void)
 {
   Kp = 0.05;
   Kd = 0.15;
@@ -35,7 +35,7 @@ void minspeed_config(void)
 
 // ========================= PID LINE FOLLOW =========================
 // mode: 'B' = black line on white, 'W' = white line on black
-void PidLine(char mode)
+void followLine(char mode)
 {
   if (mode == 'B') {
     position = qtr.readLineBlack(SensorValues);
@@ -56,18 +56,18 @@ void PidLine(char mode)
   motorspeedl = constrain(motorspeedl, -MAXSPEEDL, MAXSPEEDL);
   motorspeedr = constrain(motorspeedr, -MAXSPEEDR, MAXSPEEDR);
 
-  Drive(motorspeedl, motorspeedr);
+  setMotorSpeeds(motorspeedl, motorspeedr);
   lastError = error;
 }
 
 // =========================== CALIBRATION ===========================
-void Calibration(void)
+void calibrateSensors(void)
 {
-  RGB(0, 0, 1);  // Blue LED: calibration running
+  setLed(0, 0, 1);  // Blue LED: calibration running
   for (uint16_t i = 0; i < 200; i++) {
     qtr.calibrate();
   }
-  RGB(0, 1, 0);  // Green LED: done
+  setLed(0, 1, 0);  // Green LED: done
   delay(1500);
 
   // Print min / max calibration values

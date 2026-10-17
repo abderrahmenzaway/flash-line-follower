@@ -4,7 +4,7 @@
 
 // ============================= MOTORS ==============================
 // Speeds from -255 to 255. 0 = brake.
-void Drive(int16_t left, int16_t right)
+void setMotorSpeeds(int16_t left, int16_t right)
 {
   if (left == 0) MotorL.brake();
   else           MotorL.drive(left);
@@ -13,16 +13,16 @@ void Drive(int16_t left, int16_t right)
   else            MotorR.drive(right);
 }
 
-void Stop(void)
+void stopMotors(void)
 {
   MotorR.brake();
   MotorL.brake();
 }
 
 // ============================ RGB LED ==============================
-// RGB(1,0,0) red   | RGB(0,1,0) green   | RGB(0,0,1) blue
-// RGB(0,1,1) cyan  | RGB(1,0,1) magenta | RGB(1,1,0) yellow | RGB(1,1,1) white
-void RGB(uint8_t red_value, uint8_t green_value, uint8_t blue_value)
+// setLed(1,0,0) red   | setLed(0,1,0) green   | setLed(0,0,1) blue
+// setLed(0,1,1) cyan  | setLed(1,0,1) magenta | setLed(1,1,0) yellow | setLed(1,1,1) white
+void setLed(uint8_t red_value, uint8_t green_value, uint8_t blue_value)
 {
   digitalWrite(LED_R, red_value);
   digitalWrite(LED_G, green_value);
@@ -30,32 +30,32 @@ void RGB(uint8_t red_value, uint8_t green_value, uint8_t blue_value)
 }
 
 // Blink red LED + buzzer "nb" times, "timing" ms on / off
-void Alerte(uint8_t nb, uint16_t timing)
+void blinkAlert(uint8_t nb, uint16_t timing)
 {
   for (uint8_t i = 0; i < nb; i++) {
-    RGB(1, 0, 0);
+    setLed(1, 0, 0);
     digitalWrite(BUZZER, HIGH);
     delay(timing);
 
-    RGB(0, 0, 0);
+    setLed(0, 0, 0);
     digitalWrite(BUZZER, LOW);
     delay(timing);
   }
 }
 
 // ============================ SENSORS ==============================
-uint8_t Valeur_PROXL(void)
+uint8_t readProximityLeft(void)
 {
   return digitalRead(PROX_L);
 }
 
-uint8_t Valeur_PROXR(void)
+uint8_t readProximityRight(void)
 {
   return digitalRead(PROX_R);
 }
 
 // Ultrasonic distance in cm
-float Distance(void)
+float readDistanceCm(void)
 {
   digitalWrite(TRIG, LOW);
   delayMicroseconds(2);
@@ -81,7 +81,7 @@ static void drawSensorBars(void)
 }
 
 // Shows gyro angle + sensor bars
-void Afficher_Tout(void)
+void showSensorScreen(void)
 {
   display.setCursor(0, 5);
   display.print("Angle: ");
@@ -95,14 +95,14 @@ void Afficher_Tout(void)
 }
 
 // Shows sensor bars only
-void Afficher_Calibrage(void)
+void showSensorBars(void)
 {
   drawSensorBars();
   display.display();
   display.clearDisplay();
 }
 
-void Affichage_Text(String message)
+void showText(String message)
 {
   display.clearDisplay();
   display.setTextColor(SSD1306_WHITE);

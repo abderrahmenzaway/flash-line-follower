@@ -3,7 +3,7 @@
 // ============================================================
 
 // ========================== SPEED PRESETS ==========================
-void strate_config(void)
+void straightFastConfig(void)
 {
   Kp = 0.023;
   Kd = 0.15;
@@ -13,7 +13,7 @@ void strate_config(void)
   BASESPEEDL = MAXSPEEDL - 20;
 }
 
-void strate_configmin(void)
+void straightSlowConfig(void)
 {
   Kp = 0.015;
   Kd = 0.12;
@@ -23,7 +23,7 @@ void strate_configmin(void)
   BASESPEEDL = MAXSPEEDL - 20;
 }
 
-void maxspeed_config(void)
+void maxSpeedConfig(void)
 {
   Kp = 0.04;
   Kd = 0.25;
@@ -33,7 +33,7 @@ void maxspeed_config(void)
   BASESPEEDL = MAXSPEEDL - 20;
 }
 
-void mediumspeed_config(void)
+void mediumSpeedConfig(void)
 {
   Kp = 0.038;
   Kd = 0.2;
@@ -43,7 +43,7 @@ void mediumspeed_config(void)
   BASESPEEDL = MAXSPEEDL - 10;
 }
 
-void minspeed_config(void)
+void minSpeedConfig(void)
 {
   Kp = 0.027;
   Kd = 0.15;
@@ -53,7 +53,7 @@ void minspeed_config(void)
   BASESPEEDL = MAXSPEEDL - 20;
 }
 
-void mediumspeed_config_pro(void)
+void mediumSpeedTightConfig(void)
 {
   Kp = 0.038;
   Kd = 0.2;
@@ -91,7 +91,7 @@ static void limitSpeeds(bool ret)
 // PD line follow (integral disabled)
 // ret:  true = allow reverse, false = forward only
 // mode: 'B' = black line, 'W' = white line
-void PidLine(bool ret, char mode)
+void followLine(bool ret, char mode)
 {
   readLine(mode);
 
@@ -104,12 +104,12 @@ void PidLine(bool ret, char mode)
   motorspeedl = BASESPEEDL - motorspeed;
   limitSpeeds(ret);
 
-  Drive(motorspeedl, motorspeedr);
+  setMotorSpeeds(motorspeedl, motorspeedr);
   lastError = error;
 }
 
-// Same as PidLine (with integral), but goes straight when all sensors see white
-void PidLineWhite(bool ret, char mode)
+// Same as followLine (with integral), but goes straight when all sensors see white
+void followLineThroughGaps(bool ret, char mode)
 {
   readLine(mode);
 
@@ -123,20 +123,20 @@ void PidLineWhite(bool ret, char mode)
   motorspeedl = BASESPEEDL - motorspeed;
   limitSpeeds(ret);
 
-  if (All('W')) {
-    Drive(140, 140);
+  if (allSensors('W')) {
+    setMotorSpeeds(140, 140);
   } else {
-    Drive(motorspeedl, motorspeedr);
+    setMotorSpeeds(motorspeedl, motorspeedr);
   }
   lastError = error;
 }
 
 // Forward-only line follow; when the line is lost, keeps turning to one side
-void PidLine_LastError(char mode)
+void followLineRecover(char mode)
 {
   readLine(mode);
 
-  if (All('W')) {
+  if (allSensors('W')) {
     error = ((SENSORCOUNT - 1) * 1000) / 2;
   } else {
     error = (((SENSORCOUNT - 1) * 1000) / 2) - position;
@@ -150,18 +150,18 @@ void PidLine_LastError(char mode)
   motorspeedl = BASESPEEDL - motorspeed;
   limitSpeeds(false);
 
-  Drive(motorspeedl, motorspeedr);
+  setMotorSpeeds(motorspeedl, motorspeedr);
   lastError = error;
 }
 
 // =========================== CALIBRATION ===========================
-void Calibration(void)
+void calibrateSensors(void)
 {
-  RGB(0, 0, 1);  // Blue LED: calibration running
+  setLed(0, 0, 1);  // Blue LED: calibration running
   for (uint16_t i = 0; i < 100; i++) {
     qtr.calibrate();
   }
-  RGB(0, 0, 0);
+  setLed(0, 0, 0);
   delay(1500);
 
   // Print min / max calibration values
@@ -180,7 +180,7 @@ void Calibration(void)
 }
 
 // Use the saved manualMin / manualMax values instead of calibrating
-void ManualCalibration(void)
+void loadManualCalibration(void)
 {
   qtr.calibrate();  // Allocates the calibration arrays
   for (uint8_t i = 0; i < SENSORCOUNT; i++) {

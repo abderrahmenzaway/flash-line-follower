@@ -14,7 +14,7 @@
 #define BT_SPEED      100  // Motor speed for Bluetooth moves (0..255)
 #define DANCE_TIME_MS 300
 
-void voiceCommande(void)
+void handleVoiceCommand(void)
 {
   if (!bluetooth.available()) return;
 
@@ -22,24 +22,24 @@ void voiceCommande(void)
 
   switch (cmd) {
     case 'F':  // Forward
-      Drive(BT_SPEED, BT_SPEED);
+      setMotorSpeeds(BT_SPEED, BT_SPEED);
       break;
     case 'B':  // Backward
-      Drive(-BT_SPEED, -BT_SPEED);
+      setMotorSpeeds(-BT_SPEED, -BT_SPEED);
       break;
     case 'R':  // Turn right
-      Drive(BT_SPEED, -BT_SPEED);
+      setMotorSpeeds(BT_SPEED, -BT_SPEED);
       break;
     case 'L':  // Turn left
-      Drive(-BT_SPEED, BT_SPEED);
+      setMotorSpeeds(-BT_SPEED, BT_SPEED);
       break;
     case 'D':  // Dance: turn right for 300 ms
-      Drive(BT_SPEED, -BT_SPEED);
+      setMotorSpeeds(BT_SPEED, -BT_SPEED);
       delay(DANCE_TIME_MS);
-      Stop();
+      stopMotors();
       break;
     case 'S':  // Stop
-      Stop();
+      stopMotors();
       break;
     default:   // Ignore anything else (e.g. '\r', '\n')
       break;

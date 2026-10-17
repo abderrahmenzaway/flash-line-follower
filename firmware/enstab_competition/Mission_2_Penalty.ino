@@ -2,56 +2,56 @@
 //  Mission 2 - Penalty
 // ============================================================
 
-void penaltie()
+void missionPenalty()
 {
-  mediumspeed_config();
+  mediumSpeedConfig();
 
   // Into the 18-yard box
   while (SensorValues[13] < 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(-120, 110);
+    setMotorSpeeds(-120, 110);
   }
   while (SensorValues[13] > 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(-120, 70);
+    setMotorSpeeds(-120, 70);
   }
   while (SensorValues[8] < 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(-120, 70);
+    setMotorSpeeds(-120, 70);
   }
-  while (SensorValues[0] < 500) PidLine();
+  while (SensorValues[0] < 500) followLine();
 
   // Loop inside the 18-yard box
   while (SensorValues[13] < 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(0, 100);
+    setMotorSpeeds(0, 100);
   }
   while (SensorValues[13] > 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(0, 100);
+    setMotorSpeeds(0, 100);
   }
   while (SensorValues[5] < 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(0, 100);
+    setMotorSpeeds(0, 100);
   }
-  while (SensorValues[13] > 500) PidLine();
+  while (SensorValues[13] > 500) followLine();
   while (SensorValues[13] < 500) {
     if (SensorValues[10] < 500) {
       qtr.readLineBlack(SensorValues);
-      Drive(120, 0);
+      setMotorSpeeds(120, 0);
     }
-    PidLine();
+    followLine();
   }
 
   // Last turn on the checkerboard
   while (SensorValues[13] > 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(70, 120);
+    setMotorSpeeds(70, 120);
   }
   while (SensorValues[9] < 500) {
     qtr.readLineBlack(SensorValues);
-    Drive(0, 120);
+    setMotorSpeeds(0, 120);
   }
 
-  while (SensorValues[13] < 500) PidLine();
+  while (SensorValues[13] < 500) followLine();
 }
