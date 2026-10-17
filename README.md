@@ -1,15 +1,13 @@
-# Flash: Custom Line Follower Robot
+# Custom Line Follower Robot
 
-**Flash** is a competition line follower we designed and built from scratch: electrical design in Fritzing (wiring and PCB), 3D mechanical design in SketchUp, real-time firmware in C++ on an **Arduino Mega 2560 Pro**, and an Android app for voice control.
+A competition line follower robot designed and built from scratch: electrical design in Fritzing (wiring and PCB), 3D mechanical design in SketchUp, real-time firmware in C++ on an **Arduino Mega 2560 Pro**, and an Android app for voice control.
 
 The platform is generic. The core (line control, speed presets, encoder moves, turns, display, Bluetooth) stays the same, and each competition gets its own **mission program** written on top of it. This repository includes the program used at **ENSTAB** as an example.
 
 🏆 **1st place** at the ENSTAB, ENIM and ENIG robotics competitions (2025).
 
-👥 Team: **Abderrahmen Zaway** and **Mohamed Ali Ben Salah**
-
 <!-- TODO: add a photo of the robot -->
-<!-- ![Flash](docs/images/robot.jpg) -->
+<!-- ![Robot](docs/images/robot.jpg) -->
 
 ## Videos
 

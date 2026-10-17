@@ -1,5 +1,5 @@
 /*
- * main_code - Flash, fast line follower robot (Arduino Mega 2560 Pro)
+ * main_code - Fast line follower robot (Arduino Mega 2560 Pro)
  *
  * Sketch files (the Arduino IDE merges them in this order):
  *   main_code.ino           -> includes, pin config, globals, setup() and loop()
