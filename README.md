@@ -11,10 +11,10 @@ The platform is generic. The core (line control, speed presets, encoder moves, t
 
 ## Videos
 
-<!-- TODO: paste the two links (YouTube, or drag the .mp4 into the README on github.com if under 10 MB) -->
 | Competition run (ENSTAB) | Voice control |
 |---|---|
-| <!-- [▶️ Watch](https://youtu.be/...) --> *coming soon* | <!-- [▶️ Watch](https://youtu.be/...) --> *coming soon* |
+| [![Competition run](https://img.youtube.com/vi/gT6SelVV1c0/hqdefault.jpg)](https://youtu.be/gT6SelVV1c0) | [![Voice control](https://img.youtube.com/vi/3Rvkx6H0xsE/hqdefault.jpg)](https://youtube.com/shorts/3Rvkx6H0xsE) |
+| [▶️ Watch on YouTube](https://youtu.be/gT6SelVV1c0) | [▶️ Watch on YouTube](https://youtube.com/shorts/3Rvkx6H0xsE) |
 
 ## Features
 
