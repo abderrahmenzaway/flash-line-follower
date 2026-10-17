@@ -1,13 +1,15 @@
-# Custom Line Follower Robot
+# Flash: Custom Line Follower Robot
 
-A line follower robot I designed and built myself: hand-soldered control board, real-time firmware in C++ on a **Teensy 4.1 (ARM Cortex-M7)**, and an Android app for voice control.
+**Flash** is a competition line follower we designed and built from scratch: electrical design in Fritzing (wiring and PCB), 3D mechanical design in SketchUp, real-time firmware in C++ on an **Arduino Mega 2560 Pro**, and an Android app for voice control.
 
 The platform is generic. The core (line control, speed presets, encoder moves, turns, display, Bluetooth) stays the same, and each competition gets its own **mission program** written on top of it. This repository includes the program used at **ENSTAB** as an example.
 
 🏆 **1st place** at the ENSTAB, ENIM and ENIG robotics competitions (2025).
 
+👥 Team: **Abderrahmen Zaway** and **Mohamed Ali Ben Salah**
+
 <!-- TODO: add a photo of the robot -->
-<!-- ![Robot](docs/images/robot.jpg) -->
+<!-- ![Flash](docs/images/robot.jpg) -->
 
 ## Videos
 
@@ -18,20 +20,49 @@ The platform is generic. The core (line control, speed presets, encoder moves, t
 
 ## Features
 
-- **PD line following** on a 14-sensor QTR bar, with black-line and white-line modes
+- **PD line following** on a 16-sensor XLINE board, with black-line and white-line modes
 - **Speed presets** tuned on the track and switched between sections (straights, curves, slow zones)
-- **Encoder-based moves and turns**: wheel encoders on interrupts, with a PID correction that keeps both wheels in sync
-- **Mission programs**: each track section is a short sequence of line following and sensor-triggered manoeuvres, so a new competition only needs a new mission file
+- **Encoder-based moves and turns**: encoders on interrupts, with a PID correction that keeps both wheels in sync
+- **Mission programs**: each track section is a short sequence of line following and sensor-triggered manoeuvres, so a new competition only needs new mission files
 - **Voice control** from an Android app (Kodular) over Bluetooth (HC-05)
 - **On-robot feedback**: OLED screen (live sensor bars, messages), RGB LED and buzzer to validate each step of the logic on the track
-- **Hand-soldered control board** on perfboard: motor drivers, voltage regulator, gyroscope and screen
+- **Own hardware design**: Fritzing wiring diagram and PCB layout, two-level chassis designed in SketchUp
+
+## Hardware
+
+| Component | Role |
+|---|---|
+| Arduino Mega 2560 Pro (ATmega2560) | Main controller |
+| XLINE 16 Line Sensor Board, Digital V2 | Line detection |
+| 2 × ProFast 12 V DC motors + 2 wheels, 1 caster wheel | Propulsion |
+| 2 × TB6612FNG | Motor drivers |
+| OLED 0.96" 128×64 (I2C) | Live sensor bars and messages |
+| RGB LED, buzzer, push button | Feedback and start / calibration |
+| HC-05 | Bluetooth link to the voice control app |
+| LiPo 11.1 V 650 mAh (3S) | Battery |
+| 2 × LM2596 buck regulators | Power for the logic and the motors |
+| 2 × toggle switches, 4 × 100 Ω resistors | Power switching, LED resistors |
+
+## Electrical and mechanical design
+
+<!-- TODO: add the 4 images exported from the presentation -->
+
+**Wiring diagram (Fritzing)**
+<!-- ![Wiring](docs/design/wiring.png) -->
+
+**PCB layout (Fritzing)**
+<!-- ![PCB](docs/design/pcb.png) -->
+
+**3D mechanical design (SketchUp)**: two-level chassis, top / isometric / side / rear views
+<!-- ![3D design](docs/design/3d-views-1.png) -->
+<!-- ![3D design](docs/design/3d-views-2.png) -->
 
 ## Architecture
 
 ```
-INPUTS                        TEENSY 4.1 (Cortex-M7)                   OUTPUTS
-14 QTR sensors  ──┐   ┌──────────────────────────────────┐
-wheel encoders  ──┼──►│ core: PD line control,           │──► TB6612FNG ──► 2 DC motors
+INPUTS                       ARDUINO MEGA 2560 PRO                    OUTPUTS
+16-sensor XLINE ──┐   ┌──────────────────────────────────┐
+encoders        ──┼──►│ core: PD line control,           │──► 2 × TB6612FNG ──► 2 DC motors
 push button     ──┘   │ speed presets, encoder turns     │──► OLED, RGB LED, buzzer
                       │                                  │
                       │ mission program (per competition)│
@@ -53,15 +84,15 @@ Set `USE_BLUETOOTH` at the top of [`main_code.ino`](firmware/main_code/main_code
 ## How the line control works
 
 ```
-14 QTR sensors ──► line position (0 … 13000) ──► error = 6500 − position
-                                                        │
-                                                        ▼
-                                  correction = Kp·error + Kd·(error − last error)
-                                                        │
-                       left = base − correction, right = base + correction
-                                                        │
-                                                        ▼
-                                          TB6612FNG ──► 2 DC motors
+line sensors ──► line position ──► error = centre − position
+                                          │
+                                          ▼
+                    correction = Kp·error + Kd·(error − last error)
+                                          │
+         left = base − correction, right = base + correction
+                                          │
+                                          ▼
+                              TB6612FNG ──► 2 DC motors
 ```
 
 Gains and speeds change along the track (from [`Line_Follower.ino`](firmware/main_code/Line_Follower.ino)):
@@ -87,6 +118,8 @@ The ENSTAB track had six themed sections, run in this order:
 | 5 | Modric: speed changes, crossing a gap, then a turn | `Mission_5_Modric.ino` |
 | 6 | France: white line on a black background, then back to black | `Mission_6_France.ino` |
 
+The ENSTAB program reads 14 of the 16 sensors (`SENSORCOUNT` in `main_code.ino`).
+
 **Adapting to another competition:** replace the `Mission_*.ino` files with the new track's sections and update the mission sequence in `loop()`. The rest of the firmware stays the same.
 
 ## Voice control app
@@ -108,24 +141,19 @@ An Android app made with **Kodular**: it listens to a spoken command, turns it i
 | `D` | Dance (turn right for 300 ms) |
 | `S` | Stop |
 
-## Electrical schematic
+## Pin map (ENSTAB program)
 
-Drawn with Fritzing.
-
-<!-- TODO: add the schematic image -->
-<!-- ![Schematic](docs/schematic/schematic.png) -->
-
-| Part | Pins (Teensy 4.1) |
+| Part | Pins (Mega 2560 Pro) |
 |---|---|
-| TB6612FNG motor driver | AIN1 14, AIN2 4, PWMA 6 · BIN1 12, BIN2 10, PWMB 8 |
-| Wheel encoders | Motor 1: A 2, B 3 · Motor 2: A 18, B 19 |
-| QTR sensor bar (14 sensors) | A0 |
-| SSD1306 OLED 128×64 (I2C) | address 0x3C |
+| TB6612FNG motor drivers | AIN1 14, AIN2 4, PWMA 6 · BIN1 12, BIN2 10, PWMB 8 |
+| Encoders | Motor 1: A 2, B 3 · Motor 2: A 18, B 19 |
+| Line sensors | A0 |
+| SSD1306 OLED (I2C) | address 0x3C |
 | MPU6050 gyroscope (I2C) | optional, disabled in the ENSTAB program |
 | RGB LED | R 39, G 37, B 35 |
 | Buzzer | 41 |
 | Push button | 33 |
-| HC-05 Bluetooth | module TX → 13, module RX → 11 |
+| HC-05 Bluetooth | module TX → 13, module RX → 11 (SoftwareSerial) |
 
 ## Startup
 
@@ -136,9 +164,9 @@ Drawn with Fritzing.
 ## Repository layout
 
 ```
-firmware/main_code/   Teensy 4.1 firmware (open main_code.ino in the Arduino IDE)
+firmware/main_code/   Arduino firmware (open main_code.ino in the Arduino IDE)
 app/                  Android voice control app (.apk) built with Kodular
-docs/schematic/       Fritzing schematic (image + .fzz source)
+docs/design/          wiring diagram, PCB layout, 3D design
 docs/images/          photos and screenshots
 ```
 
@@ -154,10 +182,10 @@ docs/images/          photos and screenshots
 
 ## Build and flash
 
-1. Install the [Arduino IDE](https://www.arduino.cc/en/software) and [Teensyduino](https://www.pjrc.com/teensy/td_download.html).
+1. Install the [Arduino IDE](https://www.arduino.cc/en/software).
 2. Install these libraries from the Library Manager: Adafruit SSD1306, Adafruit GFX, SparkFun TB6612FNG, QTRSensors (Pololu), I2Cdevlib MPU6050.
-3. Open `firmware/main_code/main_code.ino`, select **Tools → Board → Teensy 4.1**, and upload.
+3. Open `firmware/main_code/main_code.ino`, select **Tools → Board → Arduino Mega or Mega 2560** (processor ATmega2560), and upload.
 
 ## Tech
 
-C++, Teensy 4.1 (ARM Cortex-M7), Arduino IDE + Teensyduino, PD control, QTR line sensors, wheel encoders and interrupts, I2C (OLED, MPU6050), HC-05 Bluetooth, Kodular, Fritzing, soldering
+C++, Arduino Mega 2560 Pro (ATmega2560), PD control, line sensor array, encoders and interrupts, I2C (OLED, MPU6050), HC-05 Bluetooth, Kodular, Fritzing (wiring and PCB), SketchUp, soldering
