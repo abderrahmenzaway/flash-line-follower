@@ -1,6 +1,6 @@
 # Custom Line Follower Robot
 
-A competition line follower robot designed and built from scratch: electrical design in Fritzing (wiring and PCB), 3D mechanical design in SketchUp, real-time firmware in C++ on an **Arduino Mega 2560 Pro**, and an Android app for voice control.
+A competition line follower robot designed and built from scratch: electrical design in Fritzing (wiring and board layout), built by hand on perfboard, 3D mechanical design in SketchUp, real-time firmware in C++ on an **Arduino Mega 2560 Pro**, and an Android app for voice control.
 
 The platform is generic. The core (line control, speed presets, encoder moves, turns, display, Bluetooth) stays the same, and each competition gets its own **mission program** written on top of it. This repository includes the program used at **ENSTAB** as an example.
 
@@ -24,7 +24,7 @@ The platform is generic. The core (line control, speed presets, encoder moves, t
 - **Mission programs**: each track section is a short sequence of line following and sensor-triggered manoeuvres, so a new competition only needs new mission files
 - **Voice control** from an Android app (Kodular) over Bluetooth (HC-05)
 - **On-robot feedback**: OLED screen (live sensor bars, messages), RGB LED and buzzer to validate each step of the logic on the track
-- **Own hardware design**: Fritzing wiring diagram and PCB layout, two-level chassis designed in SketchUp
+- **Own hardware design**: Fritzing wiring diagram and board layout, hand-soldered on perfboard; two-level chassis designed in SketchUp
 
 ## Hardware
 
@@ -43,9 +43,9 @@ The platform is generic. The core (line control, speed presets, encoder moves, t
 
 ## Electrical and mechanical design
 
-**PCB layout (Fritzing)**: the two 8-sensor bars feed a 16-channel multiplexer, so all 16 line sensors are read through a single analog pin. The board also carries the two TB6612FNG drivers, the DC-DC converter, the OLED, the IMU and the start button.
+**Board layout (Fritzing), hand-soldered on perfboard**: the two 8-sensor bars feed a 16-channel multiplexer, so all 16 line sensors are read through a single analog pin. The board also carries the two TB6612FNG drivers, the DC-DC converter, the OLED, the IMU and the start button.
 
-![PCB layout](docs/design/pcb.png)
+![Board layout](docs/design/pcb.png)
 
 **3D mechanical design (SketchUp)**: two-level chassis, with the battery, power and motors on the lower deck and the controller, drivers and display on the upper deck.
 
@@ -164,7 +164,7 @@ An Android app made with **Kodular**: it listens to a spoken command, turns it i
 ```
 firmware/enstab_competition/   Arduino firmware used at ENSTAB (core + 6 missions)
 app/                           Android voice control app (.apk) built with Kodular
-docs/design/                   wiring diagram, PCB layout, 3D design
+docs/design/                   wiring diagram, board layout, 3D design
 docs/images/                   photos and screenshots
 ```
 
@@ -186,4 +186,4 @@ docs/images/                   photos and screenshots
 
 ## Tech
 
-C++, Arduino Mega 2560 Pro (ATmega2560), PD control, line sensor array, encoders and interrupts, I2C (OLED, MPU6050), HC-05 Bluetooth, Kodular, Fritzing (wiring and PCB), SketchUp, soldering
+C++, Arduino Mega 2560 Pro (ATmega2560), PD control, line sensor array, encoders and interrupts, I2C (OLED, MPU6050), HC-05 Bluetooth, Kodular, Fritzing (wiring and board layout), perfboard soldering, SketchUp
