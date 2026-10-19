@@ -161,8 +161,8 @@ void setup(void)
   pinMode(ENCODER_B1, INPUT_PULLUP);
   pinMode(ENCODER_A2, INPUT_PULLUP);
   pinMode(ENCODER_B2, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(ENCODER_A1), readEncoder1, RISING);
-  attachInterrupt(digitalPinToInterrupt(ENCODER_A2), readEncoder2, RISING);
+  attachInterrupt(digitalPinToInterrupt(ENCODER_A1), isrEncoder1, RISING);
+  attachInterrupt(digitalPinToInterrupt(ENCODER_A2), isrEncoder2, RISING);
 
   beep(1, 40);
   setLed(0, 0, 0);

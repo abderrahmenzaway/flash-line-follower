@@ -3,7 +3,7 @@
 // ============================================================
 //
 //  The module is on SoftwareSerial "bluetooth" (pins BT_RX / BT_TX,
-//  see main_code.ino). Set USE_BLUETOOTH to 1 to use it in loop().
+//  see enstab_competition.ino). Set USE_BLUETOOTH to 1 to use it in loop().
 //
 //  Commands:
 //    'F' -> forward     'B' -> backward
