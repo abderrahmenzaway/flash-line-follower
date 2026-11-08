@@ -166,7 +166,7 @@ docs/images/                   photos and screenshots
 | `Encoder.ino` | Encoder interrupts, synchronised straight moves |
 | `Utils.ino` | Motors, turns, LED, buzzer, OLED, sensor helpers |
 | `Bluetooth.ino` | Voice / Bluetooth commands |
-| `Gyro.ino` | MPU6050 angle reading and gyro PID moves |
+| `Gyro.ino` | MPU6050 initialisation and angle reading |
 
 ## Build and flash
 

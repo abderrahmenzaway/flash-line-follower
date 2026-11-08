@@ -5,7 +5,7 @@
  *   enstab_competition.ino  -> includes, pin config, globals, setup() and loop()
  *   Bluetooth.ino           -> Bluetooth remote control (handleVoiceCommand)
  *   Encoder.ino             -> wheel encoders, encoder-based moves
- *   Gyro.ino                -> MPU6050 init, angle reading, gyro-based moves
+ *   Gyro.ino                -> MPU6050 init and angle reading
  *   Line_Follower.ino       -> QTR calibration, speed presets, PID line following
  *   Utils.ino               -> motors, LED, buzzer, sensors, OLED, sensor helpers
  */
