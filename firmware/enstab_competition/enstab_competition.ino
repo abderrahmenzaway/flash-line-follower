@@ -7,12 +7,6 @@
  *   Encoder.ino             -> wheel encoders, encoder-based moves
  *   Gyro.ino                -> MPU6050 init, angle reading, gyro-based moves
  *   Line_Follower.ino       -> QTR calibration, speed presets, PID line following
- *   Mission_1_Mexic.ino     -> mission 1
- *   Mission_2_Penalty.ino   -> mission 2
- *   Mission_3_Australia.ino -> mission 3
- *   Mission_4_Holland.ino   -> mission 4
- *   Mission_5_Modric.ino    -> mission 5
- *   Mission_6_France.ino    -> mission 6
  *   Utils.ino               -> motors, LED, buzzer, sensors, OLED, sensor helpers
  */
 
@@ -25,7 +19,7 @@
 #include <SoftwareSerial.h>
 
 // ============================== RUN MODE ==============================
-// 0 = run the missions (competition)
+// 0 = line following (press the button to stop / restart)
 // 1 = Bluetooth remote control (see Bluetooth.ino)
 #define USE_BLUETOOTH 0
 
@@ -189,15 +183,15 @@ void loop(void)
 #if USE_BLUETOOTH
   handleVoiceCommand();
 #else
-  missionMexico();
-  missionPenalty();
-  missionAustralia();
-  missionHolland();
-  missionModric();
-  missionFrance();
+  // The track-specific mission programs used in competition are not published.
+  // This mode follows the line until the button is pressed.
+  while (digitalRead(BTN));       // Wait for release
+  while (digitalRead(BTN) == 0) {
+    followLine();
+  }
   stopMotors();
-  while (digitalRead(BTN) == 0);  // Wait for button to run again
-  qtr.readLineBlack(SensorValues);
+  while (digitalRead(BTN));       // Wait for release
+  while (digitalRead(BTN) == 0);  // Wait for press to run again
 #endif
 }
 

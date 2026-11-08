@@ -2,7 +2,7 @@
 
 A competition line follower robot designed and built from scratch: electrical design in Fritzing (wiring and board layout), built by hand on perfboard, 3D mechanical design in SketchUp, real-time firmware in C++ on an **Arduino Mega 2560 Pro**, and an Android app for voice control.
 
-The platform is generic. The core (line control, speed presets, encoder moves, turns, display, Bluetooth) stays the same, and each competition gets its own **mission program** written on top of it. This repository includes the program used at **ENSTAB** as an example.
+The platform is generic. The core (line control, speed presets, encoder moves, turns, display, Bluetooth) stays the same, and each competition gets its own **mission program** written on top of it. This repository publishes the core firmware; the competition mission programs are kept private.
 
 🏆 **1st place** at the ENSTAB, ENIM and ENIG robotics competitions (2025).
 
@@ -21,7 +21,7 @@ The platform is generic. The core (line control, speed presets, encoder moves, t
 - **PD line following** on a 16-sensor XLINE board, with black-line and white-line modes
 - **Speed presets** tuned on the track and switched between sections (straights, curves, slow zones)
 - **Encoder-based moves and turns**: encoders on interrupts, with a PID correction that keeps both wheels in sync
-- **Mission programs**: each track section is a short sequence of line following and sensor-triggered manoeuvres, so a new competition only needs new mission files
+- **Mission-based design**: in competition, each track section is a short sequence of line following and sensor-triggered manoeuvres written on top of the core, so a new competition only needs a new mission program (not published here)
 - **Voice control** from an Android app (Kodular) over Bluetooth (HC-05)
 - **On-robot feedback**: OLED screen (live sensor bars, messages), RGB LED and buzzer to validate each step of the logic on the track
 - **Own hardware design**: Fritzing wiring diagram and board layout, hand-soldered on perfboard; two-level chassis designed in SketchUp
@@ -76,7 +76,7 @@ Set `USE_BLUETOOTH` at the top of [`enstab_competition.ino`](firmware/enstab_com
 
 | Value | Mode |
 |---|---|
-| `0` | Competition: runs the mission program, then waits for the button to run again |
+| `0` | Line following: follows the line until the button is pressed; press again to restart |
 | `1` | Voice control from the Android app |
 
 ## How the line control works
@@ -103,22 +103,13 @@ Gains and speeds change along the track (from [`Line_Follower.ino`](firmware/ens
 | `mediumSpeedTightConfig` | 0.038 | 0.2 | 120 | tight turn sequences |
 | `minSpeedConfig` / `straightSlowConfig` | 0.027 / 0.015 | 0.15 / 0.12 | 130 | slow, precise zones |
 
-## Example: the ENSTAB mission program
+## Competition missions
 
-The ENSTAB track had six themed sections, run in this order:
+In competition, a mission program runs on top of this core: each track section is a short sequence of line following, speed changes and sensor-triggered manoeuvres (turns, gaps, white-line sections). The mission programs are not published in this repository.
 
-| # | Mission | File |
-|---|---|---|
-| 1 | Mexic: fast straight, then slows down for the checkerboard | `Mission_1_Mexic.ino` |
-| 2 | Penalty: manoeuvres around the 18-metre box | `Mission_2_Penalty.ino` |
-| 3 | Australia: three loops with sharp turns | `Mission_3_Australia.ino` |
-| 4 | Holland: a long sequence of turns and line recoveries | `Mission_4_Holland.ino` |
-| 5 | Modric: speed changes, crossing a gap, then a turn | `Mission_5_Modric.ino` |
-| 6 | France: white line on a black background, then back to black | `Mission_6_France.ino` |
+**Adapting to a track:** write the track's sections as functions using the core (`followLine()`, the speed presets, the encoder moves and turns) and call them in order in `loop()`.
 
-The ENSTAB program reads 14 of the 16 sensors (`SENSORCOUNT` in `enstab_competition.ino`).
-
-**Adapting to another competition:** replace the `Mission_*.ino` files with the new track's sections and update the mission sequence in `loop()`. The rest of the firmware stays the same.
+The firmware reads 14 of the 16 sensors (`SENSORCOUNT` in `enstab_competition.ino`).
 
 ## Voice control app
 
@@ -162,7 +153,7 @@ An Android app made with **Kodular**: it listens to a spoken command, turns it i
 ## Repository layout
 
 ```
-firmware/enstab_competition/   Arduino firmware used at ENSTAB (core + 6 missions)
+firmware/enstab_competition/   Arduino firmware (core: line control, moves, display, Bluetooth)
 app/                           Android voice control app (.apk) built with Kodular
 docs/design/                   wiring diagram, board layout, 3D design
 docs/images/                   photos and screenshots
@@ -176,7 +167,6 @@ docs/images/                   photos and screenshots
 | `Utils.ino` | Motors, turns, LED, buzzer, OLED, sensor helpers |
 | `Bluetooth.ino` | Voice / Bluetooth commands |
 | `Gyro.ino` | MPU6050 angle reading and gyro PID moves |
-| `Mission_*.ino` | Competition-specific mission program (ENSTAB example) |
 
 ## Build and flash
 
