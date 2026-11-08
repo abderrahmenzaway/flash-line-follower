@@ -5,7 +5,7 @@
  *   enstab_competition.ino  -> includes, pin config, globals, setup() and loop()
  *   Bluetooth.ino           -> Bluetooth remote control (handleVoiceCommand)
  *   Encoder.ino             -> wheel encoders, encoder-based moves
- *   Gyro.ino                -> MPU6050 init and angle reading
+ *   Gyro.ino                -> MPU6050 init and angle reading (MPU6050_light)
  *   Line_Follower.ino       -> QTR calibration, speed presets, PID line following
  *   Utils.ino               -> motors, LED, buzzer, sensors, OLED, sensor helpers
  */
@@ -15,7 +15,7 @@
 #include <Adafruit_SSD1306.h>
 #include <SparkFun_TB6612.h>
 #include <QTRSensors.h>
-#include <MPU6050_6Axis_MotionApps612.h>
+#include <MPU6050_light.h>
 #include <SoftwareSerial.h>
 
 // ============================== RUN MODE ==============================
@@ -29,8 +29,9 @@
 SoftwareSerial bluetooth(BT_RX, BT_TX);
 
 // ============================== MPU6050 ===============================
-// Default I2C address is 0x68 (AD0 low). Use MPU6050 mpu(0x69) if AD0 is high.
-MPU6050 mpu;
+// MPU6050_light library. Default I2C address 0x68 (AD0 low);
+// if AD0 is high, call mpu.setAddress(0x69) before mpu.begin().
+MPU6050 mpu(Wire);
 
 // ======================== TB6612FNG MOTOR DRIVER ======================
 #define AIN1    14

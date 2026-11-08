@@ -166,12 +166,12 @@ docs/images/                   photos and screenshots
 | `Encoder.ino` | Encoder interrupts, synchronised straight moves |
 | `Utils.ino` | Motors, turns, LED, buzzer, OLED, sensor helpers |
 | `Bluetooth.ino` | Voice / Bluetooth commands |
-| `Gyro.ino` | MPU6050 initialisation and angle reading |
+| `Gyro.ino` | MPU6050 initialisation and angle reading (MPU6050_light library) |
 
 ## Build and flash
 
 1. Install the [Arduino IDE](https://www.arduino.cc/en/software).
-2. Install these libraries from the Library Manager: Adafruit SSD1306, Adafruit GFX, SparkFun TB6612FNG, QTRSensors (Pololu), I2Cdevlib MPU6050.
+2. Install these libraries from the Library Manager: Adafruit SSD1306, Adafruit GFX, SparkFun TB6612FNG, QTRSensors (Pololu), MPU6050_light (rfetick).
 3. Open `firmware/enstab_competition/enstab_competition.ino`, select **Tools → Board → Arduino Mega or Mega 2560** (processor ATmega2560), and upload.
 
 ## Tech
